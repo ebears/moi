@@ -23,7 +23,9 @@ Tauri v2 app with IPC commands. Rust backend shells out to `chezmoi`, `op`, and 
 
 ### Frontend (`src/`)
 - Svelte 5 with runes (`$state`, `$derived`, `$props`)
-- Skeleton UI v4 components + Adwaita theme tokens
+- ADWaveCSS for GTK4/Libadwaita design tokens and component classes (`.btn`, `.btn.primary`, `.dialog`, `.input`, `.card`)
+- ADWaveUI web components (`<adw-selector>`, `<adw-option>`) for interactive inputs
+- Dark theme via OS preference detection (`prefers-color-scheme` → `.dark-theme`/`.light-theme` class)
 - `lib/ipc.ts` — Tauri IPC wrappers
 - `lib/diff.ts` — diff parsing and rendering
 - `lib/git.ts` — git log/show parsing
@@ -36,6 +38,8 @@ Tauri v2 app with IPC commands. Rust backend shells out to `chezmoi`, `op`, and 
 - System-tray functionality is gated behind `system-tray` Cargo feature
 - Filesystem watcher uses 500ms debounce before triggering frontend refresh
 - All IPC commands are async, registered in `main.rs` invoke_handler
+- Diff/git/status variables are derived from ADWaveCSS tokens (e.g. `var(--clr-success)`, `var(--clr-danger)`) so they adapt to dark theme
+- Sidebar panels (Diff, Git Log) use fixed positioning with `sidebar-panel` class; modals (Secrets, Data, AddFile) use ADWaveCSS `.dialog` pattern
 
 ## Project Structure
 
