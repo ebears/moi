@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { Dialog } from "@skeletonlabs/skeleton-svelte";
   import { chezmoiDiff, chezmoiApplyFile, chezmoiCatSource } from "../ipc";
   import { refreshStatus } from "../stores/status";
   import { parseSideBySide, type DiffLine, parseUnifiedDiff } from "../diff";
@@ -88,115 +87,108 @@
   }
 </script>
 
-<Dialog
-  {open}
-  onOpenChange={(details) => {
-    if (!details.open) onclose();
-  }}
->
-  <Dialog.Positioner class="fixed right-0 top-0 h-full w-[60vw] z-50">
-    <Dialog.Backdrop class="fixed inset-0 bg-black/30" />
-    <Dialog.Content class="h-full bg-[var(--color-adwaita-card)] shadow-xl flex flex-col">
-      <div class="flex items-center justify-between px-6 py-4 border-b border-[var(--border-color)]">
-        <div class="flex items-center gap-4">
-          <Dialog.Title class="text-lg font-semibold font-mono truncate">
-            {path}
-          </Dialog.Title>
-          {#if isTemplate}
-            <div class="flex gap-1 text-sm">
-              <button
-                onclick={() => switchTab("diff")}
-                class="px-3 py-1 rounded-md transition-colors {activeTab === 'diff' ? 'bg-[var(--color-adwaita-accent)] text-white' : 'hover:bg-gray-100'}"
-              >
-                Diff
-              </button>
-              <button
-                onclick={() => switchTab("source")}
-                class="px-3 py-1 rounded-md transition-colors {activeTab === 'source' ? 'bg-[var(--color-adwaita-accent)] text-white' : 'hover:bg-gray-100'}"
-              >
-                Source
-              </button>
-            </div>
-          {/if}
-        </div>
-        <div class="flex gap-2">
-          <button
-            onclick={applyFile}
-            disabled={applying}
-            class="px-3 py-1.5 text-xs rounded-md bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] transition-colors disabled:opacity-50"
-          >
-            {applying ? "Applying..." : "Apply"}
-          </button>
-          <Dialog.CloseTrigger class="p-1.5 rounded-md hover:bg-gray-100 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </Dialog.CloseTrigger>
-        </div>
-      </div>
-
-      <div class="flex-1 overflow-auto font-mono text-sm">
-        {#if activeTab === "source" && isTemplate}
-          {#if sourceLoading}
-            <div class="flex items-center justify-center h-full text-gray-500">
-              Loading source...
-            </div>
-          {:else}
-            <pre class="p-4 whitespace-pre-wrap">{@html highlightTemplateSource(sourceContent)}</pre>
-          {/if}
-        {:else if loading}
-          <div class="flex items-center justify-center h-full text-gray-500">
-            Loading diff...
-          </div>
-        {:else if error}
-          <div class="flex items-center justify-center h-full text-red-600">
-            {error}
-          </div>
-        {:else if diffLines.length === 0}
-          <div class="flex items-center justify-center h-full text-gray-400">
-            No differences
-          </div>
-        {:else}
-          <div class="divide-y divide-[var(--border-color)]">
-            {#each diffLines as line}
-              {#if line.isHeader}
-                <div class="px-4 py-1 bg-gray-100 text-gray-600 font-semibold text-xs">
-                  {line.leftContent}
-                </div>
-              {:else if line.isHunk}
-                <div class="px-4 py-1 bg-blue-50 text-blue-700 text-xs">
-                  {line.leftContent}
-                </div>
-              {:else}
-                <div class="grid grid-cols-2 divide-x divide-[var(--border-color)]">
-                  <!-- Left side (original) -->
-                  <div class="{lineClass(line.leftType)}">
-                    <div class="flex">
-                      <span class="w-12 px-2 py-0.5 text-right text-[var(--color-diff-line-num)] bg-gray-50 select-none flex-shrink-0">
-                        {line.leftNum ?? ""}
-                      </span>
-                      <span class="px-2 py-0.5 flex-1 whitespace-pre overflow-x-auto">
-                        {line.leftContent ?? ""}
-                      </span>
-                    </div>
-                  </div>
-                  <!-- Right side (modified) -->
-                  <div class="{lineClass(line.rightType)}">
-                    <div class="flex">
-                      <span class="w-12 px-2 py-0.5 text-right text-[var(--color-diff-line-num)] bg-gray-50 select-none flex-shrink-0">
-                        {line.rightNum ?? ""}
-                      </span>
-                      <span class="px-2 py-0.5 flex-1 whitespace-pre overflow-x-auto">
-                        {line.rightContent ?? ""}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              {/if}
-            {/each}
+{#if open}
+  <div class="sidebar-panel-backdrop" onclick={onclose} role="presentation"></div>
+  <div class="sidebar-panel" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-[var(--clr-border)]">
+      <div class="flex items-center gap-4">
+        <span class="text-lg font-semibold font-mono truncate">
+          {path}
+        </span>
+        {#if isTemplate}
+          <div class="flex gap-1 text-sm">
+            <button
+              onclick={() => switchTab("diff")}
+              class="px-3 py-1 rounded-md transition-colors {activeTab === 'diff' ? 'bg-[var(--adw-accent)] text-white' : 'hover:bg-[var(--clr-bg-2)]'}"
+            >
+              Diff
+            </button>
+            <button
+              onclick={() => switchTab("source")}
+              class="px-3 py-1 rounded-md transition-colors {activeTab === 'source' ? 'bg-[var(--adw-accent)] text-white' : 'hover:bg-[var(--clr-bg-2)]'}"
+            >
+              Source
+            </button>
           </div>
         {/if}
       </div>
-    </Dialog.Content>
-  </Dialog.Positioner>
-</Dialog>
+      <div class="flex gap-2">
+        <button
+          onclick={applyFile}
+          disabled={applying}
+          class="btn primary text-xs"
+        >
+          {applying ? "Applying..." : "Apply"}
+        </button>
+        <button class="btn flat p-1.5" onclick={onclose}>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="flex-1 overflow-auto font-mono text-sm">
+      {#if activeTab === "source" && isTemplate}
+        {#if sourceLoading}
+          <div class="flex items-center justify-center h-full text-[var(--clr-text-2)]">
+            Loading source...
+          </div>
+        {:else}
+          <pre class="p-4 whitespace-pre-wrap">{@html highlightTemplateSource(sourceContent)}</pre>
+        {/if}
+      {:else if loading}
+        <div class="flex items-center justify-center h-full text-[var(--clr-text-2)]">
+          Loading diff...
+        </div>
+      {:else if error}
+        <div class="flex items-center justify-center h-full text-[var(--clr-danger)]">
+          {error}
+        </div>
+      {:else if diffLines.length === 0}
+        <div class="flex items-center justify-center h-full text-[var(--clr-text-3)]">
+          No differences
+        </div>
+      {:else}
+        <div class="divide-y divide-[var(--clr-border)]">
+          {#each diffLines as line}
+            {#if line.isHeader}
+              <div class="px-4 py-1 bg-[var(--clr-bg-2)] text-[var(--clr-text-2)] font-semibold text-xs">
+                {line.leftContent}
+              </div>
+            {:else if line.isHunk}
+              <div class="px-4 py-1 bg-[color-mix(in_srgb,var(--adw-accent)_12%,transparent)] text-[var(--adw-accent)] text-xs">
+                {line.leftContent}
+              </div>
+            {:else}
+              <div class="grid grid-cols-2 divide-x divide-[var(--clr-border)]">
+                <!-- Left side (original) -->
+                <div class="{lineClass(line.leftType)}">
+                  <div class="flex">
+                    <span class="w-12 px-2 py-0.5 text-right text-[var(--color-diff-line-num)] bg-[var(--clr-bg-2)] select-none flex-shrink-0">
+                      {line.leftNum ?? ""}
+                    </span>
+                    <span class="px-2 py-0.5 flex-1 whitespace-pre overflow-x-auto">
+                      {line.leftContent ?? ""}
+                    </span>
+                  </div>
+                </div>
+                <!-- Right side (modified) -->
+                <div class="{lineClass(line.rightType)}">
+                  <div class="flex">
+                    <span class="w-12 px-2 py-0.5 text-right text-[var(--color-diff-line-num)] bg-[var(--clr-bg-2)] select-none flex-shrink-0">
+                      {line.rightNum ?? ""}
+                    </span>
+                    <span class="px-2 py-0.5 flex-1 whitespace-pre overflow-x-auto">
+                      {line.rightContent ?? ""}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            {/if}
+          {/each}
+        </div>
+      {/if}
+    </div>
+  </div>
+{/if}

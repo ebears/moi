@@ -1,39 +1,11 @@
 @import "tailwindcss";
-@import "@skeletonlabs/skeleton";
-@import "@skeletonlabs/skeleton/themes/legacy";
-
-@theme {
-  --color-adwaita-bg: #f6f5f4;
-  --color-adwaita-fg: #3d3846;
-  --color-adwaita-card: #ffffff;
-  --color-adwaita-border: #deddda;
-  --color-adwaita-accent: #3584e4;
-  --color-adwaita-accent-hover: #1c71d8;
-  --color-adwaita-hover: #ebebeb;
-  --color-adwaita-text-muted: #9a9996;
-  --color-adwaita-overlay: rgba(0, 0, 0, 0.15);
-
-  --color-status-added: #33d17a;
-  --color-status-modified: #f6d32d;
-  --color-status-deleted: #e01b24;
-
-  --color-diff-add-bg: #d4edda;
-  --color-diff-add-text: #155724;
-  --color-diff-remove-bg: #f8d7da;
-  --color-diff-remove-text: #721c24;
-  --color-diff-context-bg: #f8f9fa;
-  --color-diff-line-num: #6c757d;
-
-  --color-git-hash: #3584e4;
-  --color-git-line: #9a9996;
-
-  --color-template-expression: #e5a50a;
-}
+@import "adwavecss/dist/styles.css";
 
 body {
-  background-color: var(--color-adwaita-bg);
-  color: var(--color-adwaita-fg);
-  font-family: "Cantarell", "Noto Sans", system-ui, sans-serif;
+  background-color: var(--clr-bg-1);
+  color: var(--clr-text-1);
+  font-family: "Cantarell", "Noto Sans", "Ubuntu", sans-serif;
+  font-size: 14px;
   margin: 0;
   height: 100vh;
   overflow: hidden;
@@ -43,31 +15,58 @@ body {
   height: 100vh;
 }
 
+/* Derived domain-specific variables (adapt to dark theme via ADWaveCSS tokens) */
+:root {
+  --color-diff-add-bg: color-mix(in srgb, var(--clr-success) 15%, transparent);
+  --color-diff-add-text: var(--clr-success);
+  --color-diff-remove-bg: color-mix(in srgb, var(--clr-danger) 15%, transparent);
+  --color-diff-remove-text: var(--clr-danger);
+  --color-diff-context-bg: var(--clr-bg-2);
+  --color-diff-line-num: var(--clr-text-3);
+  --color-git-hash: var(--adw-accent);
+  --color-git-line: var(--clr-text-3);
+  --color-template-expression: var(--clr-warning);
+}
+
 /* Status badge utilities */
 .badge-modified {
-  color: var(--color-status-modified);
-  background-color: color-mix(in srgb, var(--color-status-modified) 10%, transparent);
+  color: var(--clr-warning);
+  background-color: color-mix(in srgb, var(--clr-warning) 10%, transparent);
 }
 
 .badge-added {
-  color: var(--color-status-added);
-  background-color: color-mix(in srgb, var(--color-status-added) 10%, transparent);
+  color: var(--clr-success);
+  background-color: color-mix(in srgb, var(--clr-success) 10%, transparent);
 }
 
 .badge-deleted {
-  color: var(--color-status-deleted);
-  background-color: color-mix(in srgb, var(--color-status-deleted) 10%, transparent);
-}
-
-/* Card surface utility */
-.card-surface {
-  background-color: var(--color-adwaita-card);
-  border: 1px solid var(--color-adwaita-border);
-  border-radius: 0.5rem;
+  color: var(--clr-danger);
+  background-color: color-mix(in srgb, var(--clr-danger) 10%, transparent);
 }
 
 /* Template expression highlight */
 .template-expression {
   color: var(--color-template-expression);
   font-weight: 600;
+}
+
+/* Sidebar panel (slides in from right) */
+.sidebar-panel {
+  position: fixed;
+  right: 0;
+  top: 0;
+  height: 100vh;
+  width: 60vw;
+  background: var(--clr-bg-1);
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-panel-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--adw-overlay);
+  z-index: 49;
 }

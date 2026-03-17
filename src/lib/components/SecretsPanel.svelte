@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { Dialog } from "@skeletonlabs/skeleton-svelte";
   import { statusList } from "../stores/status";
   import { chezmoiCatSource, opItemGet, opCheckInstalled, type OpItemResult } from "../ipc";
   import { parseSecretReferences, type SecretReference } from "../secrets";
@@ -83,90 +82,81 @@
 
   function statusIcon(status: SecretEntry["status"]): string {
     switch (status) {
-      case "resolvable": return "✓";
-      case "unresolvable": return "✗";
-      case "error": return "⚠";
-      case "checking": return "⋯";
+      case "resolvable": return "\u2713";
+      case "unresolvable": return "\u2717";
+      case "error": return "\u26a0";
+      case "checking": return "\u22ef";
     }
   }
 
   function statusClass(status: SecretEntry["status"]): string {
     switch (status) {
-      case "resolvable": return "text-green-600";
-      case "unresolvable": return "text-red-600";
-      case "error": return "text-yellow-600";
-      case "checking": return "text-gray-400";
+      case "resolvable": return "text-[var(--clr-success)]";
+      case "unresolvable": return "text-[var(--clr-danger)]";
+      case "error": return "text-[var(--clr-warning)]";
+      case "checking": return "text-[var(--clr-text-3)]";
     }
   }
 </script>
 
-<Dialog
-  {open}
-  onOpenChange={(details) => {
-    if (!details.open) onclose();
-  }}
->
-  <Dialog.Positioner class="fixed inset-0 z-50 flex items-center justify-center">
-    <Dialog.Backdrop class="fixed inset-0 bg-black/30" />
-    <Dialog.Content class="relative bg-[var(--color-adwaita-card)] rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col">
-      <div class="flex items-center justify-between px-6 py-4 border-b border-[var(--border-color)]">
-        <Dialog.Title class="text-lg font-semibold">
-          1Password Secrets
-        </Dialog.Title>
-        <Dialog.CloseTrigger class="p-1.5 rounded-md hover:bg-gray-100 transition-colors">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </Dialog.CloseTrigger>
-      </div>
+{#if open}
+  <div class="dialog-overlay" onclick={onclose} role="presentation"></div>
+  <div class="dialog" role="dialog" aria-modal="true">
+    <div class="dialog-header">
+      <span class="dialog-title">1Password Secrets</span>
+      <button class="btn flat p-1.5" onclick={onclose}>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
 
-      <div class="flex-1 overflow-auto px-6 py-4">
-        {#if loading}
-          <div class="text-center text-gray-500 py-8">
-            Scanning for secret references...
-          </div>
-        {:else if secrets.length === 0}
-          <div class="text-center text-gray-400 py-8">
-            No 1Password references found in managed files
-          </div>
-        {:else}
-          <div class="space-y-3">
-            {#each secrets as secret}
-              <div class="flex items-start gap-3 px-4 py-3 rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)]">
-                <span class="text-lg {statusClass(secret.status)} flex-shrink-0 mt-0.5">
-                  {statusIcon(secret.status)}
-                </span>
-                <div class="flex-1 min-w-0">
-                  <div class="font-mono text-sm truncate">{secret.path}</div>
-                  <div class="text-xs text-gray-500 mt-1">
-                    <span class="font-medium">{secret.type}</span>: {secret.reference}
-                  </div>
-                  {#if secret.itemTitle}
-                    <div class="text-xs text-gray-600 mt-1">
-                      Item: {secret.itemTitle}
-                    </div>
-                  {/if}
-                  {#if secret.errorMessage}
-                    <div class="text-xs text-red-500 mt-1">
-                      {secret.errorMessage}
-                    </div>
-                  {/if}
+    <div class="dialog-body" style="max-height: 60vh; overflow: auto;">
+      {#if loading}
+        <div class="text-center text-[var(--clr-text-2)] py-8">
+          Scanning for secret references...
+        </div>
+      {:else if secrets.length === 0}
+        <div class="text-center text-[var(--clr-text-3)] py-8">
+          No 1Password references found in managed files
+        </div>
+      {:else}
+        <div class="space-y-3">
+          {#each secrets as secret}
+            <div class="flex items-start gap-3 px-4 py-3 rounded-lg border border-[var(--clr-border)] bg-[var(--clr-bg-3)]">
+              <span class="text-lg {statusClass(secret.status)} flex-shrink-0 mt-0.5">
+                {statusIcon(secret.status)}
+              </span>
+              <div class="flex-1 min-w-0">
+                <div class="font-mono text-sm truncate">{secret.path}</div>
+                <div class="text-xs text-[var(--clr-text-2)] mt-1">
+                  <span class="font-medium">{secret.type}</span>: {secret.reference}
                 </div>
+                {#if secret.itemTitle}
+                  <div class="text-xs text-[var(--clr-text-2)] mt-1">
+                    Item: {secret.itemTitle}
+                  </div>
+                {/if}
+                {#if secret.errorMessage}
+                  <div class="text-xs text-[var(--clr-danger)] mt-1">
+                    {secret.errorMessage}
+                  </div>
+                {/if}
               </div>
-            {/each}
-          </div>
+            </div>
+          {/each}
+        </div>
+      {/if}
+    </div>
+
+    <div class="px-6 py-4 border-t border-[var(--clr-border)]">
+      <div class="text-xs text-[var(--clr-text-2)]">
+        {#if opInstalled === false}
+          <span class="text-[var(--clr-warning)]">1Password CLI (op) is not installed.</span>
+        {:else if secrets.length > 0}
+          {secrets.filter(s => s.status === "resolvable").length} of {secrets.length} secrets resolvable
         {/if}
       </div>
-
-      <div class="px-6 py-4 border-t border-[var(--border-color)]">
-        <div class="text-xs text-gray-500">
-          {#if opInstalled === false}
-            <span class="text-yellow-600">1Password CLI (op) is not installed.</span>
-          {:else if secrets.length > 0}
-            {secrets.filter(s => s.status === "resolvable").length} of {secrets.length} secrets resolvable
-          {/if}
-        </div>
-      </div>
-    </Dialog.Content>
-  </Dialog.Positioner>
-</Dialog>
+    </div>
+  </div>
+{/if}

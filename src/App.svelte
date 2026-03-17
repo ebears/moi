@@ -96,42 +96,42 @@
 
 <div class="h-full flex flex-col">
   <!-- Header -->
-  <header class="flex items-center justify-between px-6 py-4 border-b border-[var(--border-color)] bg-[var(--bg-card)]">
+  <header class="flex items-center justify-between px-6 py-4 border-b border-[var(--clr-border)] bg-[var(--clr-bg-3)]">
     <h1 class="text-xl font-semibold">moi</h1>
     <div class="flex gap-3">
       <button
         onclick={openGitLogPanel}
-        class="px-4 py-2 text-sm rounded-md border border-[var(--border-color)] hover:bg-gray-50 transition-colors"
+        class="btn"
       >
         Git Log
       </button>
       <button
         onclick={openDataPanel}
-        class="px-4 py-2 text-sm rounded-md border border-[var(--border-color)] hover:bg-gray-50 transition-colors"
+        class="btn"
       >
         Data
       </button>
       <button
         onclick={openSecretsPanel}
-        class="px-4 py-2 text-sm rounded-md border border-[var(--border-color)] hover:bg-gray-50 transition-colors"
+        class="btn"
       >
         Secrets
       </button>
       <button
         onclick={openAddFileWizard}
-        class="px-4 py-2 text-sm rounded-md border border-[var(--border-color)] hover:bg-gray-50 transition-colors"
+        class="btn"
       >
         Add File
       </button>
       <button
         onclick={refreshStatus}
-        class="px-4 py-2 text-sm rounded-md border border-[var(--border-color)] hover:bg-gray-50 transition-colors"
+        class="btn"
       >
         Refresh
       </button>
       <button
         onclick={applyAll}
-        class="px-4 py-2 text-sm rounded-md bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] transition-colors"
+        class="btn primary"
       >
         Apply All
       </button>
@@ -141,14 +141,14 @@
   <!-- Content -->
   <main class="flex-1 overflow-auto p-6">
     {#if $statusLoading}
-      <div class="text-center text-gray-500 py-12">Loading status…</div>
+      <div class="text-center text-[var(--clr-text-2)] py-12">Loading status…</div>
     {:else if $statusError}
-      <div class="text-center text-red-600 py-12">
+      <div class="text-center text-[var(--clr-danger)] py-12">
         <p class="font-medium">Error loading status</p>
         <p class="text-sm mt-1">{$statusError}</p>
       </div>
     {:else if $statusList.length === 0}
-      <div class="text-center text-gray-400 py-12">No pending changes</div>
+      <div class="text-center text-[var(--clr-text-3)] py-12">No pending changes</div>
     {:else}
       <div class="space-y-2">
         <FileTree entries={$statusList} onselect={handleFileSelect} />

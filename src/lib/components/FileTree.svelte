@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { TreeView, createTreeViewCollection } from "@skeletonlabs/skeleton-svelte";
   import type { ChezmoiEntry } from "../ipc";
 
   interface Props {
@@ -11,10 +10,10 @@
 
   function statusColor(status: string): string {
     switch (status) {
-      case "M": return "text-yellow-600 bg-yellow-50";
-      case "A": return "text-green-600 bg-green-50";
-      case "D": return "text-red-600 bg-red-50";
-      default: return "text-gray-600 bg-gray-50";
+      case "M": return "badge-modified";
+      case "A": return "badge-added";
+      case "D": return "badge-deleted";
+      default: return "text-[var(--clr-text-2)] bg-[var(--clr-bg-2)]";
     }
   }
 
@@ -34,7 +33,7 @@
     status?: string;
   }
 
-  function buildTree(entries: ChezmoiEntry[]): TreeNodeData {
+  function buildTree(entries: ChezmoiEntry[]): TreeNodeData[] {
     const root: TreeNodeData = { value: "", label: "root", children: [] };
     const nodeMap = new Map<string, TreeNodeData>();
     nodeMap.set("", root);
@@ -71,28 +70,30 @@
       }
     }
 
-    return root;
+    return root.children ?? [];
+  }
+
+  function flattenNodes(nodes: TreeNodeData[], depth: number): { node: TreeNodeData; depth: number; isBranch: boolean }[] {
+    const result: { node: TreeNodeData; depth: number; isBranch: boolean }[] = [];
+    for (const node of nodes) {
+      const isBranch = node.children !== undefined && node.children.length > 0;
+      result.push({ node, depth, isBranch });
+      if (isBranch && node.children) {
+        result.push(...flattenNodes(node.children, depth + 1));
+      }
+    }
+    return result;
   }
 
   const tree = $derived(buildTree(entries));
-
-  const collection = $derived(
-    createTreeViewCollection({
-      rootNode: tree,
-    })
-  );
-
-  const flatNodes = $derived(collection.flatten());
+  const flatNodes = $derived(flattenNodes(tree, 0));
 </script>
 
 <div class="space-y-0.5">
-  {#each flatNodes as flatNode (flatNode.value)}
-    {@const depth = flatNode._index ?? 0}
-    {@const node = flatNode as TreeNodeData & { _children?: number[]; _parent?: number; _index: number }}
-    {@const isBranch = node._children !== undefined && node._children.length > 0}
+  {#each flatNodes as { node, depth, isBranch } (node.value)}
     {@const indent = depth * 16}
     <div
-      class="flex items-center gap-2 px-3 py-1.5 rounded-md hover:bg-[var(--color-adwaita-hover)] cursor-pointer transition-colors"
+      class="flex items-center gap-2 px-3 py-1.5 rounded-md hover:bg-[var(--clr-bg-2)] cursor-pointer transition-colors"
       style="padding-left: {indent + 12}px"
       role="button"
       tabindex="0"
@@ -104,12 +105,12 @@
       }}
     >
       {#if isBranch}
-        <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+        <svg class="w-4 h-4 text-[var(--clr-text-3)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
           <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
         </svg>
         <span class="font-medium text-sm">{node.label}</span>
       {:else}
-        <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-4 h-4 text-[var(--clr-text-3)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
         <span class="flex-1 font-mono text-sm">{node.label}</span>
