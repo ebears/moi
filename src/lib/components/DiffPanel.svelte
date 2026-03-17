@@ -90,22 +90,22 @@
 {#if open}
   <div class="sidebar-panel-backdrop" onclick={onclose} role="presentation"></div>
   <div class="sidebar-panel" role="dialog" aria-modal="true">
-    <div class="flex items-center justify-between px-6 py-4 border-b border-[var(--clr-border)]">
+    <div class="flex items-center justify-between px-6 py-4">
       <div class="flex items-center gap-4">
-        <span class="text-lg font-semibold font-mono truncate">
+        <span class="label font-mono truncate">
           {path}
         </span>
         {#if isTemplate}
-          <div class="flex gap-1 text-sm">
+          <div class="flex gap-1 text-xs">
             <button
               onclick={() => switchTab("diff")}
-              class="px-3 py-1 rounded-md transition-colors {activeTab === 'diff' ? 'bg-[var(--adw-accent)] text-white' : 'hover:bg-[var(--clr-bg-2)]'}"
+              class="px-3 py-1.5 transition-colors {activeTab === 'diff' ? 'text-[var(--adw-accent)] border-b-2 border-[var(--adw-accent)]' : 'subtitle hover:text-[var(--clr-text)]'}"
             >
               Diff
             </button>
             <button
               onclick={() => switchTab("source")}
-              class="px-3 py-1 rounded-md transition-colors {activeTab === 'source' ? 'bg-[var(--adw-accent)] text-white' : 'hover:bg-[var(--clr-bg-2)]'}"
+              class="px-3 py-1.5 transition-colors {activeTab === 'source' ? 'text-[var(--adw-accent)] border-b-2 border-[var(--adw-accent)]' : 'subtitle hover:text-[var(--clr-text)]'}"
             >
               Source
             </button>
@@ -116,7 +116,7 @@
         <button
           onclick={applyFile}
           disabled={applying}
-          class="btn primary text-xs"
+          class="btn primary text-xs {applying ? 'disabled' : ''}"
         >
           {applying ? "Applying..." : "Apply"}
         </button>
@@ -127,41 +127,46 @@
         </button>
       </div>
     </div>
+    <div class="separator"></div>
 
     <div class="flex-1 overflow-auto font-mono text-sm">
       {#if activeTab === "source" && isTemplate}
         {#if sourceLoading}
-          <div class="flex items-center justify-center h-full text-[var(--clr-text-2)]">
-            Loading source...
+          <div class="flex flex-col items-center justify-center h-full gap-3">
+            <div class="spinner"><div class="inner-circle"></div></div>
+            <span class="subtitle">Loading source...</span>
           </div>
         {:else}
           <pre class="p-4 whitespace-pre-wrap">{@html highlightTemplateSource(sourceContent)}</pre>
         {/if}
       {:else if loading}
-        <div class="flex items-center justify-center h-full text-[var(--clr-text-2)]">
-          Loading diff...
+        <div class="flex flex-col items-center justify-center h-full gap-3">
+          <div class="spinner"><div class="inner-circle"></div></div>
+          <span class="subtitle">Loading diff...</span>
         </div>
       {:else if error}
         <div class="flex items-center justify-center h-full text-[var(--clr-danger)]">
           {error}
         </div>
       {:else if diffLines.length === 0}
-        <div class="flex items-center justify-center h-full text-[var(--clr-text-3)]">
+        <div class="flex items-center justify-center h-full subtitle">
           No differences
         </div>
       {:else}
-        <div class="divide-y divide-[var(--clr-border)]">
+        <div>
           {#each diffLines as line}
             {#if line.isHeader}
-              <div class="px-4 py-1 bg-[var(--clr-bg-2)] text-[var(--clr-text-2)] font-semibold text-xs">
+              <div class="px-4 py-1 bg-[var(--clr-bg-2)] subtitle font-semibold text-xs">
                 {line.leftContent}
               </div>
+              <div class="separator"></div>
             {:else if line.isHunk}
               <div class="px-4 py-1 bg-[color-mix(in_srgb,var(--adw-accent)_12%,transparent)] text-[var(--adw-accent)] text-xs">
                 {line.leftContent}
               </div>
+              <div class="separator"></div>
             {:else}
-              <div class="grid grid-cols-2 divide-x divide-[var(--clr-border)]">
+              <div class="grid grid-cols-2" style="border-right: 1px solid var(--clr-dimmed);">
                 <!-- Left side (original) -->
                 <div class="{lineClass(line.leftType)}">
                   <div class="flex">

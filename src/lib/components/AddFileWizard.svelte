@@ -95,7 +95,7 @@
 
       {#if step === "path"}
         <div class="space-y-3">
-          <label class="block text-sm font-medium">Target file path</label>
+          <label class="block label">Target file path</label>
           <input
             type="text"
             bind:value={filePath}
@@ -105,7 +105,7 @@
         </div>
       {:else if step === "type"}
         <div class="space-y-3">
-          <label class="block text-sm font-medium">File type</label>
+          <label class="block label">File type</label>
           <adw-selector bind:this={selectorEl} value={fileType}>
             <adw-option value="plain">Plain</adw-option>
             <adw-option value="template">Template</adw-option>
@@ -114,10 +114,10 @@
         </div>
       {:else if step === "confirm"}
         <div class="space-y-4">
-          <div class="text-sm font-medium">Summary</div>
-          <div class="bg-[var(--clr-bg-2)] rounded-md p-3 space-y-2 text-sm font-mono">
-            <div><span class="text-[var(--clr-text-2)]">Path:</span> {filePath}</div>
-            <div><span class="text-[var(--clr-text-2)]">Type:</span> {fileType}</div>
+          <div class="label">Summary</div>
+          <div class="card font-mono text-sm">
+            <div><span class="subtitle">Path:</span> {filePath}</div>
+            <div><span class="subtitle">Type:</span> {fileType}</div>
           </div>
           {#if error}
             <div class="text-sm text-[var(--clr-danger)]">{error}</div>
@@ -129,7 +129,8 @@
       {/if}
     </div>
 
-    <div class="px-6 py-4 border-t border-[var(--clr-border)] flex justify-between">
+    <div class="separator"></div>
+    <div class="px-6 py-4 flex justify-between">
       <div>
         {#if step !== "path"}
           <button onclick={prevStep} class="btn">
@@ -142,7 +143,7 @@
           <button
             onclick={nextStep}
             disabled={step === "path" && !filePath.trim()}
-            class="btn primary"
+            class="btn primary {step === "path" && !filePath.trim() ? 'disabled' : ''}"
           >
             Next
           </button>
@@ -150,7 +151,7 @@
           <button
             onclick={submit}
             disabled={submitting}
-            class="btn primary"
+            class="btn primary {submitting ? 'disabled' : ''}"
           >
             {submitting ? "Adding..." : "Add File"}
           </button>

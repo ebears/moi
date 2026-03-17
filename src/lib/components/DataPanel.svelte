@@ -78,7 +78,8 @@
       </button>
     </div>
 
-    <div class="px-6 py-3 border-b border-[var(--clr-border)]">
+    <div class="px-6 py-3">
+      <div class="separator"></div>
       <input
         type="text"
         bind:value={search}
@@ -89,57 +90,58 @@
 
     <div class="dialog-body font-mono text-sm" style="max-height: 60vh; overflow: auto;">
       {#if loading}
-        <div class="text-center text-[var(--clr-text-2)] py-8">
-          Loading data...
+        <div class="flex flex-col items-center justify-center py-8 gap-3">
+          <div class="spinner"><div class="inner-circle"></div></div>
+          <span class="subtitle">Loading data...</span>
         </div>
       {:else if error}
         <div class="text-center text-[var(--clr-danger)] py-8">
           {error}
         </div>
       {:else if filteredKeys.length === 0}
-        <div class="text-center text-[var(--clr-text-3)] py-8">
+        <div class="text-center subtitle py-8">
           {search.trim() ? "No matching keys" : "No data"}
         </div>
       {:else}
-        <div class="space-y-1">
+        <div class="list">
           {#each filteredKeys as key}
             {@const val = data[key]}
             {@const type = valueType(val)}
             <div>
               <button
                 onclick={() => toggleKey(key)}
-                class="w-full text-left px-2 py-1 rounded hover:bg-[var(--clr-bg-2)] flex items-center gap-2"
+                class="list-element activable w-full text-left flex items-center gap-2"
               >
-                <span class="text-[var(--clr-text-3)] w-4 flex-shrink-0">
+                <span class="subtitle w-4 flex-shrink-0">
                   {#if type === "object" || type === "array"}
                     {expandedKeys.has(key) ? "\u25bc" : "\u25b6"}
                   {:else}
                     {" "}
                   {/if}
                 </span>
-                <span class="font-semibold text-[var(--clr-text-1)]">{key}</span>
-                <span class="text-[var(--clr-text-3)] text-xs">({type})</span>
+                <span class="label">{key}</span>
+                <span class="subtitle text-xs">({type})</span>
               </button>
               {#if expandedKeys.has(key) && (type === "object" || type === "array")}
-                <div class="ml-6 border-l border-[var(--clr-border)] pl-3 py-1">
+                <div class="ml-6 pl-3 py-1" style="border-left: 1px solid var(--clr-dimmed);">
                   {#if type === "object" && val !== null && val !== undefined}
                     {#each Object.entries(val as Record<string, unknown>) as [subKey, subVal]}
                       <div class="flex gap-2 py-0.5">
                         <span class="text-[var(--adw-accent)]">{subKey}:</span>
-                        <span class="text-[var(--clr-text-2)]">{formatValue(subVal)}</span>
+                        <span class="subtitle">{formatValue(subVal)}</span>
                       </div>
                     {/each}
                   {:else if type === "array" && Array.isArray(val)}
                     {#each val as item, i}
                       <div class="flex gap-2 py-0.5">
-                        <span class="text-[var(--clr-text-3)]">[{i}]</span>
-                        <span class="text-[var(--clr-text-2)]">{formatValue(item)}</span>
+                        <span class="subtitle">[{i}]</span>
+                        <span class="subtitle">{formatValue(item)}</span>
                       </div>
                     {/each}
                   {/if}
                 </div>
               {:else if type !== "object" && type !== "array"}
-                <div class="ml-6 text-[var(--clr-text-2)] py-0.5">
+                <div class="ml-6 subtitle py-0.5">
                   {formatValue(val)}
                 </div>
               {/if}

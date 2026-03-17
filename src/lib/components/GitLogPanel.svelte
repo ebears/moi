@@ -56,8 +56,8 @@
 {#if open}
   <div class="sidebar-panel-backdrop" onclick={onclose} role="presentation"></div>
   <div class="sidebar-panel" role="dialog" aria-modal="true">
-    <div class="flex items-center justify-between px-6 py-4 border-b border-[var(--clr-border)]">
-      <span class="text-lg font-semibold">
+    <div class="flex items-center justify-between px-6 py-4">
+      <span class="header-sm">
         Git Log
       </span>
       <button class="btn flat p-1.5" onclick={onclose}>
@@ -66,39 +66,45 @@
         </svg>
       </button>
     </div>
+    <div class="separator"></div>
 
     <div class="flex-1 overflow-auto font-mono text-sm">
       {#if loading}
-        <div class="flex items-center justify-center h-full text-[var(--clr-text-2)]">
-          Loading git log...
+        <div class="flex flex-col items-center justify-center h-full gap-3">
+          <div class="spinner"><div class="inner-circle"></div></div>
+          <span class="subtitle">Loading git log...</span>
         </div>
       {:else if error}
         <div class="flex items-center justify-center h-full text-[var(--clr-danger)] px-6 text-center">
           {error}
         </div>
       {:else if commits.length === 0}
-        <div class="flex items-center justify-center h-full text-[var(--clr-text-3)]">
+        <div class="flex items-center justify-center h-full subtitle">
           No commits found
         </div>
       {:else}
-        <div class="divide-y divide-[var(--clr-border)]">
+        <div class="list">
           {#each commits as commit}
             <div>
               <button
                 onclick={() => toggleCommit(commit.hash)}
-                class="w-full text-left px-4 py-2 hover:bg-[var(--clr-bg-2)] transition-colors flex gap-3"
+                class="list-element activable w-full text-left flex gap-3"
               >
-                <span class="text-[var(--color-git-hash)] font-semibold flex-shrink-0">
+                <span class="text-[var(--color-git-hash)] label flex-shrink-0">
                   {commit.hash}
                 </span>
                 <span class="truncate">{commit.message}</span>
               </button>
               {#if expandedHash === commit.hash}
-                <div class="px-4 py-3 bg-[var(--clr-bg-2)] border-t border-[var(--clr-border)]">
+                <div class="px-4 py-3 bg-[var(--clr-bg-2)]">
+                  <div class="separator"></div>
                   {#if showLoading}
-                    <div class="text-[var(--clr-text-2)]">Loading...</div>
+                    <div class="flex items-center gap-2 pt-3">
+                      <div class="spinner"><div class="inner-circle"></div></div>
+                      <span class="subtitle">Loading...</span>
+                    </div>
                   {:else}
-                    <pre class="whitespace-pre-wrap text-xs">{showDetail}</pre>
+                    <pre class="whitespace-pre-wrap text-xs pt-3">{showDetail}</pre>
                   {/if}
                 </div>
               {/if}

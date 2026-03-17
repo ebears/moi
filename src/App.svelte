@@ -96,36 +96,36 @@
 
 <div class="h-full flex flex-col">
   <!-- Header -->
-  <header class="flex items-center justify-between px-6 py-4 border-b border-[var(--clr-border)] bg-[var(--clr-bg-3)]">
-    <h1 class="text-xl font-semibold">moi</h1>
+  <header class="flex items-center justify-between px-4 py-2 bg-[var(--clr-bg-3)]">
+    <h1 class="header-sm">moi</h1>
     <div class="flex gap-3">
       <button
         onclick={openGitLogPanel}
-        class="btn"
+        class="btn adaptive"
       >
         Git Log
       </button>
       <button
         onclick={openDataPanel}
-        class="btn"
+        class="btn adaptive"
       >
         Data
       </button>
       <button
         onclick={openSecretsPanel}
-        class="btn"
+        class="btn adaptive"
       >
         Secrets
       </button>
       <button
         onclick={openAddFileWizard}
-        class="btn"
+        class="btn adaptive"
       >
         Add File
       </button>
       <button
         onclick={refreshStatus}
-        class="btn"
+        class="btn adaptive"
       >
         Refresh
       </button>
@@ -137,18 +137,22 @@
       </button>
     </div>
   </header>
+  <div class="separator"></div>
 
   <!-- Content -->
   <main class="flex-1 overflow-auto p-6">
     {#if $statusLoading}
-      <div class="text-center text-[var(--clr-text-2)] py-12">Loading status…</div>
+      <div class="flex flex-col items-center justify-center py-12 gap-3">
+        <div class="spinner"><div class="inner-circle"></div></div>
+        <span class="subtitle">Loading status…</span>
+      </div>
     {:else if $statusError}
       <div class="text-center text-[var(--clr-danger)] py-12">
-        <p class="font-medium">Error loading status</p>
-        <p class="text-sm mt-1">{$statusError}</p>
+        <p class="text font-medium">Error loading status</p>
+        <p class="subtitle mt-1">{$statusError}</p>
       </div>
     {:else if $statusList.length === 0}
-      <div class="text-center text-[var(--clr-text-3)] py-12">No pending changes</div>
+      <div class="text-center subtitle py-12">No pending changes</div>
     {:else}
       <div class="space-y-2">
         <FileTree entries={$statusList} onselect={handleFileSelect} />

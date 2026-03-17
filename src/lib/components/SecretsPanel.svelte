@@ -113,35 +113,38 @@
 
     <div class="dialog-body" style="max-height: 60vh; overflow: auto;">
       {#if loading}
-        <div class="text-center text-[var(--clr-text-2)] py-8">
-          Scanning for secret references...
+        <div class="flex flex-col items-center justify-center py-8 gap-3">
+          <div class="spinner"><div class="inner-circle"></div></div>
+          <span class="subtitle">Scanning for secret references...</span>
         </div>
       {:else if secrets.length === 0}
-        <div class="text-center text-[var(--clr-text-3)] py-8">
+        <div class="text-center subtitle py-8">
           No 1Password references found in managed files
         </div>
       {:else}
         <div class="space-y-3">
           {#each secrets as secret}
-            <div class="flex items-start gap-3 px-4 py-3 rounded-lg border border-[var(--clr-border)] bg-[var(--clr-bg-3)]">
-              <span class="text-lg {statusClass(secret.status)} flex-shrink-0 mt-0.5">
-                {statusIcon(secret.status)}
-              </span>
-              <div class="flex-1 min-w-0">
-                <div class="font-mono text-sm truncate">{secret.path}</div>
-                <div class="text-xs text-[var(--clr-text-2)] mt-1">
-                  <span class="font-medium">{secret.type}</span>: {secret.reference}
+            <div class="card">
+              <div class="flex items-start gap-3">
+                <span class="text-lg {statusClass(secret.status)} flex-shrink-0 mt-0.5">
+                  {statusIcon(secret.status)}
+                </span>
+                <div class="flex-1 min-w-0">
+                  <div class="font-mono text-sm truncate">{secret.path}</div>
+                  <div class="subtitle mt-1">
+                    <span class="label">{secret.type}</span>: {secret.reference}
+                  </div>
+                  {#if secret.itemTitle}
+                    <div class="subtitle mt-1">
+                      Item: {secret.itemTitle}
+                    </div>
+                  {/if}
+                  {#if secret.errorMessage}
+                    <div class="text-xs text-[var(--clr-danger)] mt-1">
+                      {secret.errorMessage}
+                    </div>
+                  {/if}
                 </div>
-                {#if secret.itemTitle}
-                  <div class="text-xs text-[var(--clr-text-2)] mt-1">
-                    Item: {secret.itemTitle}
-                  </div>
-                {/if}
-                {#if secret.errorMessage}
-                  <div class="text-xs text-[var(--clr-danger)] mt-1">
-                    {secret.errorMessage}
-                  </div>
-                {/if}
               </div>
             </div>
           {/each}
@@ -149,8 +152,9 @@
       {/if}
     </div>
 
-    <div class="px-6 py-4 border-t border-[var(--clr-border)]">
-      <div class="text-xs text-[var(--clr-text-2)]">
+    <div class="separator"></div>
+    <div class="px-6 py-4">
+      <div class="subtitle">
         {#if opInstalled === false}
           <span class="text-[var(--clr-warning)]">1Password CLI (op) is not installed.</span>
         {:else if secrets.length > 0}
