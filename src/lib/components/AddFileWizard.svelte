@@ -78,7 +78,7 @@
   <div class="dialog" role="dialog" aria-modal="true">
     <div class="dialog-header">
       <span class="dialog-title">Add File to Chezmoi</span>
-      <button class="btn flat p-1.5" onclick={onclose}>
+      <button class="btn flat p-1.5" onclick={onclose} aria-label="Close">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
@@ -95,7 +95,7 @@
 
       {#if step === "path"}
         <div class="space-y-3">
-          <label class="block label">Target file path</label>
+          <div class="block label">Target file path</div>
           <input
             type="text"
             bind:value={filePath}
@@ -105,7 +105,7 @@
         </div>
       {:else if step === "type"}
         <div class="space-y-3">
-          <label class="block label">File type</label>
+          <div class="block label">File type</div>
           <adw-selector bind:this={selectorEl} value={fileType}>
             <adw-option value="plain">Plain</adw-option>
             <adw-option value="template">Template</adw-option>
